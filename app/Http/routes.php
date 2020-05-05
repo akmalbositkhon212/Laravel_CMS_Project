@@ -12,6 +12,8 @@
 use App\Post;
 use App\User;
 use App\Role;
+use App\Country;
+use App\Photos;
 Route::get('/', function () {
     return view('welcome');
 });
@@ -149,4 +151,25 @@ Route::get('user/{id}/roles', function($id){
 });
 Route::get('role/{id}/users', function($id){
   return Role::find($id)->users;//look to Role model: belongsToMany(). Created Role model, roles tables, role_user table
+});
+//////////////
+//ELOQUENT Has Many Through
+//////////////
+
+Route::get('country/{id}/post', function($id){
+  return Country::find($id)->posts;  //look to Country model: hasManyThrough()
+});
+
+//////////////
+//ELOQUENT Polymorphism -> One to Many
+//////////////
+
+Route::get('user/{id}/photos', function($id){
+  return User::find($id)->photos;//look to User moder: morphMany(); and Photos model:morphTo imageable()
+});
+Route::get('postphotos/{id}/photos', function($id){
+  return Post::find($id)->photos;
+});
+Route::get('photos/{id}/type', function($id){
+  return Photos::find($id)->imageable;
 });
