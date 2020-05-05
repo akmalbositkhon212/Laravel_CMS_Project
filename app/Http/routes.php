@@ -11,6 +11,7 @@
 */
 use App\Post;
 use App\User;
+use App\Role;
 Route::get('/', function () {
     return view('welcome');
 });
@@ -145,4 +146,7 @@ Route::get('users/{id}/posts', function($id){
 
 Route::get('user/{id}/roles', function($id){
   return User::find($id)->roles;//look to User model: belongsToMany(). Created Role model, roles tables, role_user table
+});
+Route::get('role/{id}/users', function($id){
+  return Role::find($id)->users;//look to Role model: belongsToMany(). Created Role model, roles tables, role_user table
 });
