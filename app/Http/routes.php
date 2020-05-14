@@ -14,6 +14,9 @@ use App\User;
 use App\Role;
 use App\Country;
 use App\Photos;
+use App\Video;
+use App\Tag;
+use App\Address;
 Route::get('/', function () {
     return view('welcome');
 });
@@ -152,6 +155,45 @@ Route::get('user/{id}/roles', function($id){
 Route::get('role/{id}/users', function($id){
   return Role::find($id)->users;//look to Role model: belongsToMany(). Created Role model, roles tables, role_user table
 });
+
+Route::get('user/{id}/assign_role/{role}', function($id, $role){
+$user=  User::find($id);
+$getrole=Role::where('name','=',$role)->get();
+if(count($getrole)!=0){
+  $userrole=  $user->roles()->where('name','=',$role)->get();
+  if(count($userrole)!=0){
+    return $user->roles;
+  }
+  $id= $getrole[0]->id;
+  $user->roles()->attach($id);//attaching role to user
+}else{
+  $user->roles()->save(new Role(['name'=>$role]));//adding new role
+}
+
+return $user->roles;
+});
+
+Route::get('user/{id}/roles/detach/{role}', function($id, $role){
+  $user=  User::find($id);
+  $getrole=Role::where('name','=',$role)->get();
+  if(count($getrole)!=0){
+    $userrole=  $user->roles()->where('name','=',$role)->get();
+    if(count($userrole)>0){
+      $id= $getrole[0]->id;
+      $user->roles()->detach($id);//detaching the roles from the user
+    }else{
+      return "The user does not has this role";
+    }
+  }else{
+    return "No such user role";
+  }
+  return $user->roles;
+});
+
+Route::get('user/{id}/sync/roles', function($id){
+  User::find($id)->roles()->sync([1,2]);//syncing roles, deletes all roles of the user, and then adds roles inside the array
+  return User::find($id)->roles;
+});
 //////////////
 //ELOQUENT Has Many Through
 //////////////
@@ -172,4 +214,40 @@ Route::get('postphotos/{id}/photos', function($id){
 });
 Route::get('photos/{id}/type', function($id){
   return Photos::find($id)->imageable;
+});
+
+//////////////
+//ELOQUENT Polymorphism -> Many to Many
+//////////////
+
+Route::get('posttags/{id}', function($id){
+  return Post::find($id)->tags;
+});
+Route::get('videotags/{id}', function($id){
+  return Video::find($id)->tags;
+});
+Route::get('tags/{id}/posts', function($id){
+  $tag = Tag::find($id);
+    return Tag::find($id)->posts;
+});
+Route::get('tags/{id}/videos', function($id){
+  $tag = Tag::find($id);
+    return Tag::find($id)->videos;
+});
+//////////////
+//ELOQUENT  One to One
+//////////////
+
+//insert
+Route::get('user/{id}/address/{address}', function($id, $address){
+  $newaddress= new Address(['name'=>$address]);
+  User::find($id)->address()->save($newaddress);
+});
+
+//update
+Route::get('user/{id}/update/address/{name}', function($id, $name){
+  $address = Address::whereUserId($id)->first();
+  $address->name = $name;
+  $address->save();
+  return User::find($id)->address;
 });

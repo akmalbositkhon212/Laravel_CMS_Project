@@ -14,9 +14,12 @@ class Post extends Model
       'content'
     ];
     public function user(){
-      return $this->belongsTo('App\User');
+      return $this->belongsTo('App\User'); //one to one
     }
     public function photos(){
-      return $this->morphMany('App\Photos', 'imageable');
+      return $this->morphMany('App\Photos', 'imageable');//Polymorphism one to Many
+    }
+    public function tags(){
+      return $this->morphToMany('App\Tag', 'taggable');//Polymorphism many to many
     }
 }
