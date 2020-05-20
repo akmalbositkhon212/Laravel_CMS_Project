@@ -205,6 +205,10 @@ Route::get('country/{id}/post', function($id){
 //////////////
 //ELOQUENT Polymorphism -> One to Many
 //////////////
+Route::get('user/{id}/insert/photo/{name}', function($id,$name){
+  User::find($id)->photos()->create(['path'=>$name.'.jpg']);//insert
+  return User::find($id)->photos;
+});
 
 Route::get('user/{id}/photos', function($id){
   return User::find($id)->photos;//look to User moder: morphMany(); and Photos model:morphTo imageable()
@@ -215,10 +219,30 @@ Route::get('postphotos/{id}/photos', function($id){
 Route::get('photos/{id}/type', function($id){
   return Photos::find($id)->imageable;
 });
+Route::get('photos/delete', function(){
+  Photos::where('path', '=', "")->delete();//deleting
+  return Photos::all();
+});
+
+Route::get('photos/update', function(){
+$photo=  Photos::where('path', '=', 'just photo.jpg')->first();
+  $photo->path='justphoto.jpg';
+  $photo->save();
+  return $photo;
+});
+
 
 //////////////
 //ELOQUENT Polymorphism -> Many to Many
 //////////////
+Route::get('create/tags', function(){
+  $post=Post::create(['title'=>'PHP', 'content'=>'Laravel, php, javascript attached']);
+  $tag=Tag::create(['name'=>'php-attach']);
+  $video = Video::create(['name'=>'learn_php_attach.mov']);
+  $post->tags()->attach($tag);
+  $video->tags()->attach($tag);
+  return Tag::where('name','=','php')->first()->pivot;
+});
 
 Route::get('posttags/{id}', function($id){
   return Post::find($id)->tags;

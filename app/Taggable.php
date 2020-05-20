@@ -7,4 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Taggable extends Model
 {
     //
+    protected $fillable = [
+      'name'
+    ];
 }

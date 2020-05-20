@@ -8,6 +8,7 @@ class Photos extends Model
 {
     //
     protected $fillable=[
+      'path',
       'title',
       'content'
     ];
