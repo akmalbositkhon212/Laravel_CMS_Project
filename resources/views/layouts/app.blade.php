@@ -33,6 +33,11 @@
             .title {
                 font-size: 96px;
             }
+
+            a {
+              text-decoration: none;
+             }
+
         </style>
     </head>
     <body>

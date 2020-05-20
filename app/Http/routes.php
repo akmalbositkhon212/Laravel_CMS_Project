@@ -32,7 +32,7 @@ $url = route('admin.post');
 return "this url is " .$url;
 
 }));
-Route::get('/posts/{id}/{name}', 'PostController@show_post');
+// Route::get('/posts/{id}/{name}', 'PostController@show_post');
 
 Route::get('insert', function(){
   DB::insert('insert into posts(title, content) values(?,?)',['Laravel APP', 'the content of laravel mvc']);
@@ -275,3 +275,8 @@ Route::get('user/{id}/update/address/{name}', function($id, $name){
   $address->save();
   return User::find($id)->address;
 });
+
+//////////////
+//CRUD Application
+//////////////
+Route::resource('/posts', 'PostController');
